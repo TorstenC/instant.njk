@@ -195,7 +195,11 @@
                 // Get template
                 const template = templateInput.value;
                 if (!template.trim()) {
-                    outputDiv.innerHTML = '<div class="error">Template is empty</div>';
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error';
+                    errorDiv.textContent = 'Template is empty';
+                    outputDiv.innerHTML = '';
+                    outputDiv.appendChild(errorDiv);
                     return;
                 }
 
@@ -218,7 +222,11 @@
                 iframeDoc.close();
 
             } catch (error) {
-                outputDiv.innerHTML = '<div class="error">Error: ' + error.message + '</div>';
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error';
+                errorDiv.textContent = 'Error: ' + error.message;
+                outputDiv.innerHTML = '';
+                outputDiv.appendChild(errorDiv);
             }
         }
 
