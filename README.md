@@ -17,7 +17,7 @@ A minimalist browser-based playground for testing Nunjucks templates with live H
 
 ## Usage
 
-1. Open `index.html` in your web browser
+1. Open `docs/index.html` in your web browser (or visit the GitHub Pages URL)
 2. Edit the Nunjucks template in the left panel
 3. Modify the JSON data in the middle panel
 4. Click "Render" or press Ctrl+Enter to see the output
@@ -57,12 +57,12 @@ A minimalist browser-based playground for testing Nunjucks templates with live H
 
 ## Installation
 
-No installation required! Just clone the repository and open `index.html` in your browser.
+No installation required! Just clone the repository and open `docs/index.html` in your browser.
 
 ```bash
 git clone https://github.com/TorstenC/instant.njk.git
 cd instant.njk
-# Open index.html in your browser
+# Open docs/index.html in your browser
 ```
 
 ## Development
@@ -70,6 +70,24 @@ cd instant.njk
 The project uses:
 - Nunjucks 3.2.4 (browser version included)
 - Pure HTML, CSS, and JavaScript (no build step required)
+
+### Project Structure
+
+- `/src` - Source files (index.html, nunjucks.min.js)
+- `/docs` - Deployment files for GitHub Pages (generated via `npm run deploy`)
+
+### Deployment
+
+To deploy changes to GitHub Pages:
+
+```bash
+# 1. Edit files in /src directory
+# 2. Run the deploy script to copy files to /docs
+npm run deploy
+# 3. Commit and push changes
+```
+
+The `npm run deploy` script copies `index.html` and `nunjucks.min.js` from `/src` to `/docs` for GitHub Pages hosting.
 
 ## License
 
