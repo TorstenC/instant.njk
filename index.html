@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>instant.njk - Nunjucks Playground</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f5f5f5;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            overflow: hidden;
+        }
+
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: #34495e;
+            color: white;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .panel-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        textarea {
+            flex: 1;
+            border: none;
+            padding: 1rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            resize: none;
+            outline: none;
+            line-height: 1.5;
+        }
+
+        #output {
+            flex: 1;
+            padding: 1rem;
+            overflow: auto;
+            background: #fafafa;
+        }
+
+        .error {
+            color: #e74c3c;
+            background: #fee;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            margin: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>instant.njk</h1>
+        <p>Nunjucks Playground with Live-Preview for HTML</p>
+    </header>
+
+    <div class="container">
+        <div class="panel">
+            <div class="panel-header">Nunjucks Template</div>
+            <div class="panel-content">
+                <textarea id="template" placeholder="Enter your Nunjucks template here..."><!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ heading }}</h1>
+    <ul>
+    {% for item in items %}
+        <li>{{ item.name }} - {{ item.price }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html></textarea>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">JSON Data</div>
+            <div class="panel-content">
+                <textarea id="data" placeholder="Enter your JSON data here...">{
+    "title": "My Shop",
+    "heading": "Welcome to my shop!",
+    "items": [
+        { "name": "Apple", "price": "$1.00" },
+        { "name": "Banana", "price": "$0.50" },
+        { "name": "Orange", "price": "$0.75" }
+    ]
+}</textarea>
+                <button id="render">Render</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Output (HTML Preview)</div>
+            <div class="panel-content">
+                <div id="output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="nunjucks.min.js"></script>
+    <script>
+        const templateInput = document.getElementById('template');
+        const dataInput = document.getElementById('data');
+        const outputDiv = document.getElementById('output');
+        const renderButton = document.getElementById('render');
+
+        function renderTemplate() {
+            try {
+                // Clear previous output
+                outputDiv.innerHTML = '';
+                outputDiv.className = '';
+
+                // Parse JSON data
+                let data;
+                try {
+                    data = JSON.parse(dataInput.value || '{}');
+                } catch (e) {
+                    throw new Error('Invalid JSON: ' + e.message);
+                }
+
+                // Get template
+                const template = templateInput.value;
+                if (!template.trim()) {
+                    outputDiv.innerHTML = '<div class="error">Template is empty</div>';
+                    return;
+                }
+
+                // Render with Nunjucks
+                const rendered = nunjucks.renderString(template, data);
+
+                // Create an iframe to render the HTML
+                const iframe = document.createElement('iframe');
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+                iframe.style.background = 'white';
+                
+                outputDiv.appendChild(iframe);
+                
+                // Write the rendered HTML to the iframe
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(rendered);
+                iframeDoc.close();
+
+            } catch (error) {
+                outputDiv.innerHTML = '<div class="error">Error: ' + error.message + '</div>';
+            }
+        }
+
+        // Render on button click
+        renderButton.addEventListener('click', renderTemplate);
+
+        // Also render on Ctrl+Enter or Cmd+Enter
+        templateInput.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                renderTemplate();
+            }
+        });
+
+        dataInput.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                renderTemplate();
+            }
+        });
+
+        // Initial render
+        renderTemplate();
+    </script>
+</body>
+</html>
