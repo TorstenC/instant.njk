@@ -197,7 +197,7 @@
         <div class="panel" id="jsonPanel">
             <div class="panel-header">
                 <span>JSON Data</span>
-                <button class="toggle-btn" id="toggleJson">◀</button>
+                <button class="toggle-btn" id="toggleJson" aria-label="Toggle JSON Data panel" aria-expanded="true">◀</button>
             </div>
             <div class="panel-content">
                 <textarea id="data" placeholder="Enter your JSON data here...">{
@@ -253,8 +253,9 @@
         // Toggle JSON panel collapse/expand
         toggleJsonBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            jsonPanel.classList.toggle('collapsed');
-            toggleJsonBtn.textContent = jsonPanel.classList.contains('collapsed') ? '▶' : '◀';
+            const isCollapsed = jsonPanel.classList.toggle('collapsed');
+            toggleJsonBtn.textContent = isCollapsed ? '▶' : '◀';
+            toggleJsonBtn.setAttribute('aria-expanded', !isCollapsed);
         });
 
         function renderTemplate() {
