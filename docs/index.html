@@ -163,6 +163,12 @@
         .copy-feedback.show {
             opacity: 1;
         }
+
+        .copy-button-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -211,7 +217,7 @@
         <div class="panel">
             <div class="panel-header">
                 <span>Output (HTML Preview)</span>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="copy-button-wrapper">
                     <button id="copyButton" class="copy-button" aria-label="Copy rendered HTML to clipboard" disabled>
                         Copy HTML
                     </button>
@@ -232,6 +238,10 @@
         const renderButton = document.getElementById('render');
         const copyButton = document.getElementById('copyButton');
         const copyFeedback = document.getElementById('copyFeedback');
+        
+        // Constants
+        const FEEDBACK_TRANSITION_DURATION = 300; // milliseconds, matches CSS transition
+        const FEEDBACK_DISPLAY_DURATION = 2000; // milliseconds
         
         // Store the last rendered HTML
         let lastRenderedHTML = '';
@@ -302,7 +312,7 @@
             copyFeedback.classList.remove('show');
             setTimeout(() => {
                 copyFeedback.textContent = '';
-            }, 300);
+            }, FEEDBACK_TRANSITION_DURATION);
         }
 
         // Copy to clipboard function
@@ -319,13 +329,13 @@
                 copyFeedback.textContent = 'Copied!';
                 copyFeedback.classList.add('show');
                 
-                // Reset feedback after 2 seconds
-                setTimeout(resetCopyFeedback, 2000);
+                // Reset feedback after display duration
+                setTimeout(resetCopyFeedback, FEEDBACK_DISPLAY_DURATION);
             } catch (error) {
                 // Fallback for browsers that don't support clipboard API
                 copyFeedback.textContent = 'Copy failed';
                 copyFeedback.classList.add('show');
-                setTimeout(resetCopyFeedback, 2000);
+                setTimeout(resetCopyFeedback, FEEDBACK_DISPLAY_DURATION);
                 console.error('Failed to copy:', error);
             }
         }
