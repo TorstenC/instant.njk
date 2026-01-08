@@ -61,6 +61,9 @@
             padding: 0.75rem 1rem;
             font-weight: 500;
             font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .panel-content {
@@ -118,6 +121,51 @@
         button:active {
             transform: translateY(1px);
         }
+
+        .copy-button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin: 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .copy-button:hover {
+            background: #229954;
+        }
+
+        .copy-button:active {
+            transform: translateY(1px);
+        }
+
+        .copy-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .copy-button.copied {
+            background: #2ecc71;
+        }
+
+        .copy-feedback {
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .copy-feedback.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -164,7 +212,13 @@
         </div>
 
         <div class="panel">
-            <div class="panel-header">Output (HTML Preview)</div>
+            <div class="panel-header">
+                <span>Output (HTML Preview)</span>
+                <button id="copyButton" class="copy-button" aria-label="Copy rendered HTML to clipboard" disabled>
+                    <span>Copy HTML</span>
+                    <span id="copyFeedback" class="copy-feedback" aria-live="polite"></span>
+                </button>
+            </div>
             <div class="panel-content">
                 <div id="output"></div>
             </div>
@@ -177,6 +231,11 @@
         const dataInput = document.getElementById('data');
         const outputDiv = document.getElementById('output');
         const renderButton = document.getElementById('render');
+        const copyButton = document.getElementById('copyButton');
+        const copyFeedback = document.getElementById('copyFeedback');
+        
+        // Store the last rendered HTML
+        let lastRenderedHTML = '';
 
         function renderTemplate() {
             try {
@@ -200,11 +259,17 @@
                     errorDiv.textContent = 'Template is empty';
                     outputDiv.innerHTML = '';
                     outputDiv.appendChild(errorDiv);
+                    lastRenderedHTML = '';
+                    copyButton.disabled = true;
                     return;
                 }
 
                 // Render with Nunjucks
                 const rendered = nunjucks.renderString(template, data);
+                
+                // Store the rendered HTML for copying
+                lastRenderedHTML = rendered;
+                copyButton.disabled = false;
 
                 // Create an iframe to render the HTML
                 const iframe = document.createElement('iframe');
@@ -227,11 +292,52 @@
                 errorDiv.textContent = 'Error: ' + error.message;
                 outputDiv.innerHTML = '';
                 outputDiv.appendChild(errorDiv);
+                lastRenderedHTML = '';
+                copyButton.disabled = true;
+            }
+        }
+
+        // Copy to clipboard function
+        async function copyToClipboard() {
+            if (!lastRenderedHTML) {
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(lastRenderedHTML);
+                
+                // Show visual feedback
+                copyButton.classList.add('copied');
+                copyFeedback.textContent = 'Copied!';
+                copyFeedback.classList.add('show');
+                
+                // Reset feedback after 2 seconds
+                setTimeout(() => {
+                    copyButton.classList.remove('copied');
+                    copyFeedback.classList.remove('show');
+                    setTimeout(() => {
+                        copyFeedback.textContent = '';
+                    }, 300);
+                }, 2000);
+            } catch (error) {
+                // Fallback for browsers that don't support clipboard API
+                copyFeedback.textContent = 'Copy failed';
+                copyFeedback.classList.add('show');
+                setTimeout(() => {
+                    copyFeedback.classList.remove('show');
+                    setTimeout(() => {
+                        copyFeedback.textContent = '';
+                    }, 300);
+                }, 2000);
+                console.error('Failed to copy:', error);
             }
         }
 
         // Render on button click
         renderButton.addEventListener('click', renderTemplate);
+        
+        // Copy button click handler
+        copyButton.addEventListener('click', copyToClipboard);
 
         // Also render on Ctrl+Enter or Cmd+Enter
         templateInput.addEventListener('keydown', (e) => {
