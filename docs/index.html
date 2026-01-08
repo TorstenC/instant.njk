@@ -297,6 +297,15 @@
             }
         }
 
+        // Reset copy feedback helper function
+        function resetCopyFeedback() {
+            copyButton.classList.remove('copied');
+            copyFeedback.classList.remove('show');
+            setTimeout(() => {
+                copyFeedback.textContent = '';
+            }, 300);
+        }
+
         // Copy to clipboard function
         async function copyToClipboard() {
             if (!lastRenderedHTML) {
@@ -312,23 +321,12 @@
                 copyFeedback.classList.add('show');
                 
                 // Reset feedback after 2 seconds
-                setTimeout(() => {
-                    copyButton.classList.remove('copied');
-                    copyFeedback.classList.remove('show');
-                    setTimeout(() => {
-                        copyFeedback.textContent = '';
-                    }, 300);
-                }, 2000);
+                setTimeout(resetCopyFeedback, 2000);
             } catch (error) {
                 // Fallback for browsers that don't support clipboard API
                 copyFeedback.textContent = 'Copy failed';
                 copyFeedback.classList.add('show');
-                setTimeout(() => {
-                    copyFeedback.classList.remove('show');
-                    setTimeout(() => {
-                        copyFeedback.textContent = '';
-                    }, 300);
-                }, 2000);
+                setTimeout(resetCopyFeedback, 2000);
                 console.error('Failed to copy:', error);
             }
         }
