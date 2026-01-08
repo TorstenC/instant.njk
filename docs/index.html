@@ -133,9 +133,6 @@
             font-size: 0.85rem;
             font-weight: 500;
             transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .copy-button:hover {
@@ -214,10 +211,12 @@
         <div class="panel">
             <div class="panel-header">
                 <span>Output (HTML Preview)</span>
-                <button id="copyButton" class="copy-button" aria-label="Copy rendered HTML to clipboard" disabled>
-                    <span>Copy HTML</span>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button id="copyButton" class="copy-button" aria-label="Copy rendered HTML to clipboard" disabled>
+                        Copy HTML
+                    </button>
                     <span id="copyFeedback" class="copy-feedback" aria-live="polite"></span>
-                </button>
+                </div>
             </div>
             <div class="panel-content">
                 <div id="output"></div>
