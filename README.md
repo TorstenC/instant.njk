@@ -9,7 +9,8 @@ A minimalist browser-based playground for testing Nunjucks templates with live H
 ## Features
 
 - **Live Preview**: Real-time HTML rendering in an iframe
-- **Three-Panel Layout**: Template input, JSON data input, and HTML output
+- **Three-Panel Layout**: JSON data input (collapsible), template input, and HTML output
+- **Collapsible JSON Panel**: Collapse the JSON data panel to maximize workspace
 - **Error Handling**: Clear error messages for invalid JSON or template syntax
 - **Keyboard Shortcuts**: Press Ctrl+Enter (or Cmd+Enter on Mac) to render
 - **No Server Required**: Runs entirely in the browser
@@ -18,8 +19,8 @@ A minimalist browser-based playground for testing Nunjucks templates with live H
 ## Usage
 
 1. Open `docs/index.html` in your web browser (or visit the GitHub Pages URL)
-2. Edit the Nunjucks template in the left panel
-3. Modify the JSON data in the middle panel
+2. Edit the JSON data in the left panel (collapsible for more space)
+3. Modify the Nunjucks template in the middle panel
 4. Click "Render" or press Ctrl+Enter to see the output
 5. The rendered HTML appears in the right panel
 
