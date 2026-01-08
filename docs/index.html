@@ -255,7 +255,7 @@
             e.stopPropagation();
             const isCollapsed = jsonPanel.classList.toggle('collapsed');
             toggleJsonBtn.textContent = isCollapsed ? '▶' : '◀';
-            toggleJsonBtn.setAttribute('aria-expanded', !isCollapsed);
+            toggleJsonBtn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
         });
 
         function renderTemplate() {
